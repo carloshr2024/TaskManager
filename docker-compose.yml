@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  userservice:
+    build:
+      context: ./UserService
+      dockerfile: Dockerfile
+    ports:
+      - "5001:80"
+    environment:
+      - ConnectionStrings__DefaultConnection=YourConnectionString
+
+  taskservice:
+    build:
+      context: ./TaskService
+      dockerfile: Dockerfile
+    ports:
+      - "5002:80"
+    environment:
+      - ConnectionStrings__DefaultConnection=YourConnectionString
