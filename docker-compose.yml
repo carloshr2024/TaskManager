@@ -8,7 +8,7 @@ services:
     ports:
       - "5001:80"
     environment:
-      - ConnectionStrings__DefaultConnection=YourConnectionString
+      - ConnectionStrings__DefaultConnection=Server=localhost;Database=TaskManagerDB;User Id=TaskMangerDB;Password=TaskMangerDB;
 
   taskservice:
     build:
@@ -17,4 +17,4 @@ services:
     ports:
       - "5002:80"
     environment:
-      - ConnectionStrings__DefaultConnection=YourConnectionString
+      - ConnectionStrings__DefaultConnection=Server=localhost;Database=TaskManagerDB;User Id=TaskMangerDB;Password=TaskMangerDB;

@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication;
+﻿
+
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
@@ -7,36 +9,41 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 
-public class Startup
+namespace TaskService
 {
-    public void ConfigureServices(IServiceCollection services)
+    public class Startup
     {
-        services.AddDbContext<TaskContext>(options =>
-            options.UseSqlServer("YourConnectionString"));
-
-        services.AddControllers();
-        services.AddSwaggerGen(c =>
+        public void ConfigureServices(IServiceCollection services)
         {
-            c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskService", Version = "v1" });
-        });
+            services.AddDbContext<TaskContext>(options =>
+                options.UseSqlServer("YourConnectionString"));
 
-        services.AddSingleton<ILogger, CustomLogger>();
-    }
+            services.AddControllers();
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "TaskService", Version = "v1" });
+            });
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-    {
-        if (env.IsDevelopment())
-        {
-            app.UseDeveloperExceptionPage();
-            app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskService v1"));
+            services.AddSingleton<ILogger, CustomLogger>();
         }
 
-        app.UseRouting();
-        app.UseEndpoints(endpoints =>
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            endpoints.MapControllers();
-            //endpoints.MapMetrics(); // Para Prometheus
-        });
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+                app.UseSwagger();
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TaskService v1"));
+            }
+
+            app.UseRouting();
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                //endpoints.MapMetrics(); // Para Prometheus
+            });
+        }
     }
 }
+
+
