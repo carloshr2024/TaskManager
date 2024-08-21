@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using UserService.Domain.Entities;
 
 /// <summary>
 /// Contexto de base de datos para la entidad User.

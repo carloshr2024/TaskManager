@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using TaskService.Domain.Entities;
 
 public class TaskContext : DbContext
 {

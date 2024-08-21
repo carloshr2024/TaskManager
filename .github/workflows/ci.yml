@@ -10,27 +10,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
+        
       - name: Setup .NET
-        uses: actions/setup-dotnet@v1
+        uses: actions/setup-dotnet@v2
         with:
           dotnet-version: '8.0.x'
+          
       - name: Restore dependencies
         run: dotnet restore
+        
       - name: Build
         run: dotnet build --configuration Release --no-restore
+        
       - name: Publish
         run: dotnet publish --configuration Release --no-restore -o ./output
+        
       - name: Build Docker images
         run: docker-compose build
+        
+      - name: Login to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          
       - name: Push Docker images to Azure Container Registry
         run: |
-          az acr login --name <your-acr-name>
-          docker tag userservice <your-acr-name>.azurecr.io/userservice:latest
-          docker push <your-acr-name>.azurecr.io/userservice:latest
-          docker tag taskservice <your-acr-name>.azurecr.io/taskservice:latest
-          docker push <your-acr-name>.azurecr.io/taskservice:latest
+          docker tag userservice ${{ secrets.ACR_NAME }}.azurecr.io/userservice:latest
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/userservice:latest
+          docker tag taskservice ${{ secrets.ACR_NAME }}.azurecr.io/taskservice:latest
+          docker push ${{ secrets.ACR_NAME }}.azurecr.io/taskservice:latest
+          
       - name: Deploy to Azure Web App
         run: |
-          az webapp create --resource-group <your-resource-group> --plan <your-app-service-plan> --name <your-app-name> --runtime "DOTNETCORE|8.0"
-          az webapp update --resource-group <your-resource-group> --name <your-app-name> --set containerImage=<your-acr-name>.azurecr.io/userservice:latest
+          az webapp create --resource-group ${{ secrets.RESOURCE_GROUP }} --plan ${{ secrets.APP_SERVICE_PLAN }} --name ${{ secrets.APP_NAME }} --runtime "DOTNETCORE|8.0" || echo "Web app already exists"
+          az webapp update --resource-group ${{ secrets.RESOURCE_GROUP }} --name ${{ secrets.APP_NAME }} --set containerImage=${{ secrets.ACR_NAME }}.azurecr.io/userservice:latest

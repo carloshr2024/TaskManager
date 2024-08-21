@@ -4,17 +4,25 @@ services:
   userservice:
     build:
       context: ./UserService
-      dockerfile: Dockerfile
     ports:
-      - "5001:80"
+      - "5001:80" # Puerto expuesto para el servicio de usuario
     environment:
-      - ConnectionStrings__DefaultConnection=Server=localhost;Database=TaskManagerDB;User Id=TaskMangerDB;Password=TaskMangerDB;
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__UserDb=Server=LAPTOP-BEDCLS7D;Database=TaskManagerDB;User Id=TaskManagerDB;Password=TaskManagerDB;Encrypt=False; # Cadena de conexión a la base de datos
 
   taskservice:
     build:
       context: ./TaskService
-      dockerfile: Dockerfile
     ports:
-      - "5002:80"
+      - "5002:80" # Puerto expuesto para el servicio de tareas
     environment:
-      - ConnectionStrings__DefaultConnection=Server=localhost;Database=TaskManagerDB;User Id=TaskMangerDB;Password=TaskMangerDB;
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__TaskDb=Server=LAPTOP-BEDCLS7D;Database=TaskManagerDB;User Id=TaskManagerDB;Password=TaskManagerDB;Encrypt=False; # Cadena de conexión a la base de datos
+
+  db:
+    image: mcr.microsoft.com/mssql/server # Imagen de SQL Server
+    environment:
+      SA_PASSWORD: Niva2033$ # Contraseña para el usuario SA
+      ACCEPT_EULA: Y # Acepta el EULA
+    ports:
+      - "1433:1433" # Puerto expuesto para SQL Server

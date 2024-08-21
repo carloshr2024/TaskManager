@@ -4,79 +4,59 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using System.Text;
+using UserService.Domain.Repositories;
+using UserService.Domain.Services;
+using UserService.Infrastructure.Repositories;
 
 namespace UserService
+{ 
+public class Startup
 {
-    /// <summary>
-    /// Clase de configuración de la aplicación ASP.NET Core.
-    /// </summary>
-    public class Startup
+    public void ConfigureServices(IServiceCollection services)
     {
-        /// <summary>
-        /// Configura los servicios de la aplicación.
-        /// </summary>
-        /// <param name="services">Colección de servicios a configurar.</param>
-        public void ConfigureServices(IServiceCollection services)
-        {
-            // Configuración del contexto de base de datos
-            services.AddDbContext<UserContext>(options =>
-                options.UseSqlServer("DefaultConnection"));
+        // Configura el contexto de la base de datos con SQL Server
+        services.AddDbContext<UserContext>(options =>
+            options.UseSqlServer("UserDb"));
 
-            services.AddControllers();
+        services.AddControllers(); // Agrega soporte para controladores
+        services.AddSwaggerGen(); // Habilita Swagger para documentación de API
 
-            // Configuración de autenticación JWT
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-                .AddJwtBearer(options =>
+        // Configura la autenticación JWT
+        services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = "UserTask",
-                        ValidAudience = "TaskAudience",
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ADBFSDG"))
-                    };
-                });
-
-            // Configuración de Swagger para documentación de API
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "UserService", Version = "v1" });
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = "cahr.com",
+                    ValidAudience = "cahrcom",
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("ztzcahr"))
+                };
             });
 
-            // Registro de un logger personalizado
-            services.AddSingleton<ILogger, CustomLogger>();
-        }
-
-        /// <summary>
-        /// Configura la tubería de middleware de la aplicación.
-        /// </summary>
-        /// <param name="app">Aplicación a configurar.</param>
-        /// <param name="env">Entorno de ejecución.</param>
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService v1"));
-            }
-
-            app.UseRouting();
-            app.UseAuthentication();
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-                // endpoints.MapMetrics(); // Para Prometheus
-            });
-        }
+        // Registra el repositorio y el servicio de usuario
+        services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<UsersService>();
     }
+
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    {
+        if (env.IsDevelopment())
+        {
+            app.UseDeveloperExceptionPage(); // Muestra errores en desarrollo
+        }
+
+        app.UseRouting(); // Habilita el enrutamiento
+        app.UseAuthentication(); // Habilita la autenticación
+        app.UseAuthorization(); // Habilita la autorización
+        app.UseEndpoints(endpoints => { endpoints.MapControllers(); }); // Mapea los controladores
+        app.UseSwagger(); // Habilita Swagger
+        app.UseSwaggerUI(c => { c.SwaggerEndpoint("/swagger/v1/swagger.json", "UserService v1"); }); // Configura la UI de Swagger
+    }
+}
 }

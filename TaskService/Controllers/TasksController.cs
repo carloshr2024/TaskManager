@@ -1,29 +1,31 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using System.Linq;
+using TaskService.Domain.Entities;
+using TaskService.Domain.Services;
 
 [ApiController]
 [Route("api/[controller]")]
 public class TasksController : ControllerBase
 {
-    private readonly TaskContext _context;
+    private readonly TasksService _taskService;
 
-    /// <summary>
-    /// Inicializa una nueva instancia de la clase <see cref="TasksController"/>.
-    /// </summary>
-    /// <param name="context">El contexto de la base de datos para acceder a las tareas.</param>
-    public TasksController(TaskContext context)
+    public TasksController(TasksService taskService)
     {
-        _context = context;
+        _taskService = taskService; // Inyección de dependencia
     }
 
-    /// <summary>
-    /// Obtiene la lista de todas las tareas.
-    /// </summary>
-    /// <returns>Una acción que contiene la lista de tareas.</returns>
+    // Obtiene todas las tareas
     [HttpGet]
     public IActionResult GetTasks()
     {
-        var tasks = _context.Tasks.ToList();
-        return Ok(tasks);
+        var tasks = _taskService.GetTasks();
+        return Ok(tasks); // Devuelve las tareas en formato JSON
+    }
+
+    // Crea una nueva tarea
+    [HttpPost]
+    public IActionResult CreateTask(TaskItem task)
+    {
+        _taskService.CreateTask(task);
+        return CreatedAtAction(nameof(GetTasks), new { id = task.Id }, task); // Devuelve la tarea creada
     }
 }
