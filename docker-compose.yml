@@ -8,7 +8,7 @@ services:
       - "5001:80" # Puerto expuesto para el servicio de usuario
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__UserDb=Server=LAPTOP-BEDCLS7D;Database=TaskManagerDB;User Id=TaskManagerDB;Password=TaskManagerDB;Encrypt=False; # Cadena de conexión a la base de datos
+      - ConnectionStrings__UserDb=Server=LAPTOP-BEDCLS7D;Database=TaskManagerDB;User Id=taskuser;Password=taskuser;Encrypt=False; # Cadena de conexión a la base de datos
 
   taskservice:
     build:
@@ -17,7 +17,7 @@ services:
       - "5002:80" # Puerto expuesto para el servicio de tareas
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__TaskDb=Server=LAPTOP-BEDCLS7D;Database=TaskManagerDB;User Id=TaskManagerDB;Password=TaskManagerDB;Encrypt=False; # Cadena de conexión a la base de datos
+      - ConnectionStrings__TaskDb=Server=LAPTOP-BEDCLS7D;Database=TaskManagerDB;User Id=taskuser;Password=taskuser;Encrypt=False; # Cadena de conexión a la base de datos
 
   db:
     image: mcr.microsoft.com/mssql/server # Imagen de SQL Server

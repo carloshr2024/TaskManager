@@ -15,7 +15,7 @@ namespace TaskService
         {
             // Configura el contexto de la base de datos con SQL Server
             services.AddDbContext<TaskContext>(options =>
-                options.UseSqlServer("taskDB"));
+                options.UseSqlServer("Server=LAPTOP-BEDCLS7D;Database=TaskManagerDB;User Id=taskuser;Password=taskuser;Encrypt=False;"));
 
             services.AddControllers(); // Agrega soporte para controladores
             services.AddSwaggerGen(); // Habilita Swagger para documentación de API
