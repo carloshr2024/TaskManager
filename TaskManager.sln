@@ -10,7 +10,9 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Elementos de la solución", "Elementos de la solución", "{C5ADABDD-8073-487F-B8A3-98D337A31189}"
 	ProjectSection(SolutionItems) = preProject
 		.github\workflows\ci.yml = .github\workflows\ci.yml
+		k8s\deployment.yml = k8s\deployment.yml
 		docker-compose.yml = docker-compose.yml
+		k8s\service.yaml = k8s\service.yaml
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserService.Tests", "UserService.Tests\UserService.Tests.csproj", "{7F5ADB5B-D3F8-4324-AA34-8117AF9E9BFF}"
